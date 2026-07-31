@@ -1,6 +1,6 @@
-# cyber_labs
+# Cyber Labs
 
-Small hands-on labs for learning security by building.
+Small hands-on labs for learning security by building. A "ladder" of increasingly more secure iterations of the same base use case.
 
 Each **track** (`01-…`, `02-…`) is one problem family. Steps inside a track (`1-1`, `1-2`, …) share the same base app; the folder name is the control that step adds. **1-1-base** = all weaknesses open.
 
