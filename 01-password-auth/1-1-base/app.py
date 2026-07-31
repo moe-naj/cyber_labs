@@ -1,36 +1,51 @@
 """
-01-password-auth / 1-1-plaintext — intentionally naive.
+01-password-auth / 1-1-base — intentionally naive baseline.
 
 DO NOT use this pattern in production.
 
-Weakness list (open in 1-1). Later steps mark items MITIGATED and leave the rest open.
+Weakness list (all OPEN in 1-1-base). Later steps are named for the control they add;
+each marks the matching W* items MITIGATED and leaves the rest open.
 Only the control for that step should change.
 """
 
+from datetime import timedelta
 import sqlite3
 from pathlib import Path
 
 from flask import Flask, redirect, request, session, url_for
 
 # ---------------------------------------------------------------------------
-# Weaknesses in this step (1-1)
+# Weaknesses in this step (1-1-base) — full inventory for track 01 (W1–W14)
 # Status: OPEN | MITIGATED (in a later step — update comment there)
 # ---------------------------------------------------------------------------
-# W1 OPEN — passwords stored in plaintext (readable via sqlite3 / strings)
-# W2 OPEN — no password hashing at all
-# W3 OPEN — no per-user salt
-# W4 OPEN — no slow hash (bcrypt/argon2)
-# W5 OPEN — Flask secret_key hard-coded in source (forgable sessions if leaked)
-# W6 OPEN — no login rate limiting / account lockout
-# W7 OPEN — no password strength rules
-# W8 OPEN — HTTP only (no TLS); credentials can be sniffed off-host
-# W9 OPEN — debug mode enabled (extra attack surface; stack traces, etc.)
+# W1  OPEN — passwords stored in plaintext (readable via sqlite3 / strings)
+# W2  OPEN — no password hashing at all
+# W3  OPEN — no per-user salt
+# W4  OPEN — no slow hash (bcrypt/argon2)
+# W5  OPEN — Flask secret_key hard-coded in source (forgable sessions if leaked)
+# W6  OPEN — no login rate limiting / account lockout
+# W7  OPEN — no password strength rules
+# W8  OPEN — HTTP only (no TLS); credentials can be sniffed off-host
+# W9  OPEN — debug mode enabled (extra attack surface; stack traces, etc.)
+# W10 OPEN — session cookie flags weak (HttpOnly/Secure/SameSite not hardened)
+# W11 OPEN — no meaningful session expiry / idle timeout
+# W12 OPEN — session not regenerated on login (session fixation class)
+# W13 OPEN — user enumeration via distinct error messages
+# W14 OPEN — no CSRF tokens on state-changing forms (register/login)
 # ---------------------------------------------------------------------------
 
 # --- App setup ---------------------------------------------------------------
 app = Flask(__name__)
 # W5: secret is hard-coded and committed with the code.
 app.secret_key = "dev-secret-change-me"
+
+# W10: intentionally weak cookie flags (defaults are safer in modern Flask).
+app.config["SESSION_COOKIE_HTTPONLY"] = False  # readable by document.cookie / XSS
+app.config["SESSION_COOKIE_SECURE"] = False  # sent over plain HTTP
+app.config["SESSION_COOKIE_SAMESITE"] = None  # no SameSite restriction
+
+# W11: long-lived permanent sessions; no short idle timeout.
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=365)
 
 DB_PATH = Path(__file__).with_name("users.db")
 
@@ -69,7 +84,7 @@ def index():
             f'<p><a href="{url_for("logout")}">Log out</a></p>'
         )
     return (
-        "<h1>1-1 plaintext password auth</h1>"
+        "<h1>1-1 base (all weaknesses open)</h1>"
         f'<p><a href="{url_for("register_form")}">Register</a> | '
         f'<a href="{url_for("login_form")}">Log in</a></p>'
     )
@@ -78,7 +93,7 @@ def index():
 # --- Register: show form + create user ---------------------------------------
 @app.get("/register")
 def register_form():
-    """HTML form; browser POSTs username/password to /register."""
+    """HTML form; browser POSTs username/password to /register. W14: no CSRF token."""
     return """
     <h1>Register</h1>
     <form method="post">
@@ -96,6 +111,7 @@ def register():
     Create account.
     W1/W2/W3/W4: store password as submitted (plaintext).
     W7: any non-empty password is accepted.
+    W14: no CSRF check on this POST.
     """
     username = (request.form.get("username") or "").strip()
     password = request.form.get("password") or ""
@@ -116,7 +132,7 @@ def register():
 # --- Login: show form + check password + start session -----------------------
 @app.get("/login")
 def login_form():
-    """HTML form; browser POSTs credentials to /login."""
+    """HTML form; browser POSTs credentials to /login. W14: no CSRF token."""
     return """
     <h1>Log in</h1>
     <form method="post">
@@ -134,6 +150,9 @@ def login():
     Verify credentials, then set session cookie.
     W1/W2: compare submitted password to plaintext DB value.
     W6: unlimited attempts.
+    W12: does not regenerate session before elevating privilege.
+    W13: different errors for unknown user vs bad password.
+    W14: no CSRF check on this POST.
     """
     username = (request.form.get("username") or "").strip()
     password = request.form.get("password") or ""
@@ -142,10 +161,18 @@ def login():
             "SELECT username, password FROM users WHERE username = ?",
             (username,),
         ).fetchone()
+
+    # W13: distinct messages enable username enumeration.
+    if row is None:
+        return "Unknown username", 401
     # W1 + W6: plain string compare; no lockout / rate limit.
-    if row is None or row["password"] != password:
-        return "Invalid username or password", 401
-    # Session cookie signed with app.secret_key (W5).
+    if row["password"] != password:
+        return "Wrong password", 401
+
+    # W12: reuse existing session cookie; only add identity (no rotate/clear).
+    # W5: cookie signed with hard-coded secret_key.
+    # W10/W11: weak flags + permanent long-lived session.
+    session.permanent = True
     session["username"] = row["username"]
     return redirect(url_for("me"))
 
@@ -162,7 +189,7 @@ def me():
 
 @app.get("/logout")
 def logout():
-    """Clear session cookie data on the server side of the session object."""
+    """Clear session data in the cookie. (Signed-cookie model: no server session store.)"""
     session.clear()
     return redirect(url_for("index"))
 

@@ -1,8 +1,8 @@
-# Cyber Labs
+# cyber_labs
 
 Small hands-on labs for learning security by building.
 
-Each **track** (`01-…`, `02-…`) is one problem family. Steps inside a track (`1-1`, `1-2`, …) are the same base app with one security upgrade at a time.
+Each **track** (`01-…`, `02-…`) is one problem family. Steps inside a track (`1-1`, `1-2`, …) share the same base app; the folder name is the control that step adds. **1-1-base** = all weaknesses open.
 
 ## ⚠️ Disclaimer
 
@@ -21,7 +21,7 @@ If a lab stores secrets in plaintext, skips TLS, omits rate limits, or hard-code
 
 | Track | Topic | Status |
 |-------|--------|--------|
-| [01-password-auth](./01-password-auth/) | Password auth ladder (plaintext → hash → salt → bcrypt) | 1-1 ready |
+| [01-password-auth](./01-password-auth/) | Password auth ladder | 1-1-base ready |
 
 ## Layout
 
@@ -30,9 +30,7 @@ cyber_labs/
   README.md
   01-password-auth/
     README.md
-    1-1-plaintext/
-    1-2-unsalted-hash/
-    1-3-salted-hash/
-    1-4-bcrypt/
-  02-…/
+    1-1-base/              # all weaknesses open
+    1-2-basic-hashing/     # created when built
+    …
 ```
