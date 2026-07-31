@@ -1,4 +1,4 @@
-# cyber_labs
+# Cyber Labs
 
 Small hands-on labs for learning security by building.
 

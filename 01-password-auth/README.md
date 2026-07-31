@@ -25,3 +25,11 @@ Each gap is the **next smallest meaningful upgrade** only — enough to change t
 - Bad: plaintext → OAuth2 + MFA + rate limits + TLS in one go  
 
 If it isn’t in the step title, it doesn’t get added yet.
+
+## Code comment convention
+
+Each step’s `app.py` keeps a **W1, W2, …** weakness list at the top (`OPEN` or `MITIGATED`).
+
+- Only mark **MITIGATED** what this step actually fixed.
+- Leave other items `OPEN` (maybe note “still open — see step 1-x”).
+- Inline comments at the relevant lines reference the same IDs (e.g. `# W1:`).

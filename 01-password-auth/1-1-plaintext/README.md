@@ -29,17 +29,17 @@ Open http://127.0.0.1:5000
 
 ## Weaknesses to observe
 
-Do these yourself after registering a user:
+Same IDs as the top of `app.py` (all **OPEN** in 1-1):
 
-1. **Passwords stored in plaintext** — open the DB:
-   ```bash
-   sqlite3 users.db "SELECT * FROM users;"
-   # or: strings users.db
-   ```
-2. **No rate limit** — spam login guesses; nothing blocks you.
-3. **HTTP only** — traffic is cleartext on the wire (fine on localhost; deadly on a real network).
-4. **Weak/no password rules** — `a` is a valid password.
-5. **Session cookie is simple** — signed with a hard-coded secret in source.
+| ID | Issue | Try |
+|----|--------|-----|
+| W1–W4 | Password storage (plaintext / no real hash stack) | `sqlite3 users.db "SELECT * FROM users;"` or `strings users.db` |
+| W5 | Hard-coded `secret_key` | Read it in `app.py` |
+| W6 | No rate limit | Spam login guesses |
+| W7 | No password rules | Register with `a` |
+| W8–W9 | HTTP + debug | Note `app.run(...)` |
+
+Later steps mark the fixed IDs **MITIGATED** and leave the rest open.
 
 None of this is "how to build prod auth." It's "what the boring parts are and why people add hashing, lockouts, TLS, etc."
 
