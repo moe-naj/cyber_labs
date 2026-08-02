@@ -6,7 +6,7 @@
 
 Later folders are named for the control they add (e.g. basic hashing, salting). Each step closes only the matching W* items.
 
-**Track:** [01-password-auth](../)
+**Track:** [01-password-auth](../) · **Notes:** [Learnings.md](./Learnings.md)
 
 ## Run
 
