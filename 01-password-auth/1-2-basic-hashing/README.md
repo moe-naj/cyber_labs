@@ -83,7 +83,7 @@ Same IDs as the top of `app.py`:
 
 | Planned folder | Implies closed (mainly) |
 |----------------|-------------------------|
-| `1-3-salting` | W3 |
+| `1-3-salted-hashing` | W3 |
 | `1-4-slow-hash` | W4 (bcrypt/argon2) |
 | … | one control / name per step |
 

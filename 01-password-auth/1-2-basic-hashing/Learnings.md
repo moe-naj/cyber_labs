@@ -48,3 +48,7 @@ sqlite3 users.db "SELECT username, password_hash FROM users;"
 ## Ladder takeaway
 
 One control this folder: **basic (fast) hashing**. Next smallest upgrades live in later folders (salt, then slow hash) — don’t multi-jump.
+
+## Next rung
+
+[1-3-salted-hashing](../1-3-salted-hashing/) — per-user salt (W3).

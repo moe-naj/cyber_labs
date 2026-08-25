@@ -10,7 +10,7 @@ Same small web app, stepped up one control at a time.
 |------|--------|---------|--------|
 | 1-1 | [1-1-base](./1-1-base/) | Baseline — **all W1–W14 OPEN** | ready |
 | 1-2 | [1-2-basic-hashing](./1-2-basic-hashing/) | SHA-256 digests — **W1, W2 MITIGATED** | ready |
-| 1-3 | `1-3-salting` | Per-user salt (mainly W3) | not built |
+| 1-3 | [1-3-salted-hashing](./1-3-salted-hashing/) | Per-user salt — **W3 MITIGATED** | ready |
 | 1-4 | `1-4-slow-hash` | bcrypt/argon2 (mainly W4) | not built |
 
 Only create the next folder when that step is implemented. Empty placeholders are not kept.
