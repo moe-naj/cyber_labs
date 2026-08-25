@@ -36,3 +36,7 @@ sqlite3 users.db "SELECT username, salt, password_hash FROM users;"
 ## Ladder takeaway
 
 One control this folder: **per-user salt**. Next smallest upgrade is a slow hash (W4).
+
+## Next rung
+
+`1-4-slow-hash` — not built. W4 only (bcrypt/argon2). Same rule: copy 1-3, user implements, then comments/docs.
