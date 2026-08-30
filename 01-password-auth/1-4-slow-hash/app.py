@@ -1,27 +1,28 @@
 """
-01-password-auth / 1-1-base — intentionally naive baseline.
+01-password-auth / 1-4-slow-hash — bcrypt password hashing.
 
 DO NOT use this pattern in production.
 
-Weakness list (all OPEN in 1-1-base). Later steps are named for the control they add;
-each marks the matching W* items MITIGATED and leaves the rest open.
-Only the control for that step should change.
+Control added this step: slow KDF (bcrypt) on register and login.
+Marks W4 MITIGATED; keeps W1–W3 mitigated; leaves the rest open (no multi-jump).
+Salt lives inside the bcrypt string — no separate salt column.
 """
 
 from datetime import timedelta
 import sqlite3
 from pathlib import Path
+import bcrypt  # W4: slow KDF; salt+cost baked into the stored string (W3)
 
 from flask import Flask, redirect, request, session, url_for
 
 # ---------------------------------------------------------------------------
-# Weaknesses in this step (1-1-base) — full inventory for track 01 (W1–W15)
-# Status: OPEN | MITIGATED (in a later step — update comment there)
+# Weaknesses in this step (1-4-slow-hash) — full inventory for track 01
+# Status: OPEN | MITIGATED (only flip what this step fixed)
 # ---------------------------------------------------------------------------
-# W1  OPEN — passwords stored in plaintext (readable via sqlite3 / strings)
-# W2  OPEN — no password hashing at all
-# W3  OPEN — no per-user salt
-# W4  OPEN — no slow hash (bcrypt/argon2)
+# W1  MITIGATED — password_hash stores a bcrypt string, not the password
+# W2  MITIGATED — register + login use bcrypt.hashpw / checkpw (one-way)
+# W3  MITIGATED — bcrypt gensalt per hash; same password → different string
+# W4  MITIGATED — bcrypt (default cost 12); offline wordlist is expensive vs SHA-256
 # W5  OPEN — Flask secret_key hard-coded in source (forgable sessions if leaked)
 # W6  OPEN — no login rate limiting / account lockout
 # W7  OPEN — no password strength rules
@@ -60,14 +61,14 @@ def get_db():
 
 
 def init_db():
-    """Create users table if missing. password column holds the raw secret (W1)."""
+    """Create users table if missing. Salt is inside password_hash (bcrypt string)."""
     with get_db() as conn:
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL
+                password_hash TEXT NOT NULL
             )
             """
         )
@@ -85,7 +86,7 @@ def index():
             f'<p><a href="{url_for("logout")}">Log out</a></p>'
         )
     return (
-        "<h1>1-1 base (all weaknesses open)</h1>"
+        "<h1>1-4 slow hash (W4 mitigated — bcrypt)</h1>"
         f'<p><a href="{url_for("register_form")}">Register</a> | '
         f'<a href="{url_for("login_form")}">Log in</a></p>'
     )
@@ -110,9 +111,10 @@ def register_form():
 def register():
     """
     Create account.
-    W1/W2/W3/W4: store password as submitted (plaintext).
+    W4: bcrypt.hashpw + gensalt (cost 12 default). Salt is inside the stored string.
     W7: any non-empty password is accepted.
     W14: no CSRF check on this POST.
+    W15: no pepper.
     """
     username = (request.form.get("username") or "").strip()
     password = request.form.get("password") or ""
@@ -120,10 +122,12 @@ def register():
         return "Username and password required", 400
     try:
         with get_db() as conn:
-            # W1: password column = literal password string.
+            # W4: slow KDF. hashpw wants bytes; store ASCII bcrypt string in TEXT.
+            password_hash_bytes = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+            password_hash_str = password_hash_bytes.decode("ascii")
             conn.execute(
-                "INSERT INTO users (username, password) VALUES (?, ?)",
-                (username, password),
+                "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+                (username, password_hash_str),
             )
     except sqlite3.IntegrityError:
         return "Username already taken", 400
@@ -149,7 +153,7 @@ def login_form():
 def login():
     """
     Verify credentials, then set session cookie.
-    W1/W2: compare submitted password to plaintext DB value.
+    W4: checkpw reads cost+salt from the stored bcrypt string (do not gensalt again).
     W6: unlimited attempts.
     W12: does not regenerate session before elevating privilege.
     W13: different errors for unknown user vs bad password.
@@ -159,15 +163,15 @@ def login():
     password = request.form.get("password") or ""
     with get_db() as conn:
         row = conn.execute(
-            "SELECT username, password FROM users WHERE username = ?",
+            "SELECT username, password_hash FROM users WHERE username = ?",
             (username,),
         ).fetchone()
 
     # W13: distinct messages enable username enumeration.
     if row is None:
         return "Unknown username", 401
-    # W1 + W6: plain string compare; no lockout / rate limit.
-    if row["password"] != password:
+    # W4: both args bytes. W6: no lockout / rate limit.
+    if not bcrypt.checkpw(password.encode("utf-8"), row["password_hash"].encode("ascii")):
         return "Wrong password", 401
 
     # W12: reuse existing session cookie; only add identity (no rotate/clear).

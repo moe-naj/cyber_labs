@@ -32,6 +32,7 @@ from flask import Flask, redirect, request, session, url_for
 # W12 OPEN — session not regenerated on login (session fixation class)
 # W13 OPEN — user enumeration via distinct error messages
 # W14 OPEN — no CSRF tokens on state-changing forms (register/login)
+# W15 OPEN — no password pepper (app secret outside the user table; not W5)
 # ---------------------------------------------------------------------------
 
 # --- App setup ---------------------------------------------------------------

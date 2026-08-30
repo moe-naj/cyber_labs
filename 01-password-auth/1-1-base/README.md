@@ -2,7 +2,7 @@
 
 > ⚠️ **Educational only.** Intentionally weak. Do not deploy. Use at your own risk. See the [repo disclaimer](../../README.md#-disclaimer).
 
-**Baseline** for track 01: register + login + session. **All weaknesses (W1–W14) are OPEN.**
+**Baseline** for track 01: register + login + session. **All weaknesses (W1–W15) are OPEN.**
 
 Later folders are named for the control they add (e.g. basic hashing, salting). Each step closes only the matching W* items.
 
@@ -29,7 +29,7 @@ Open http://127.0.0.1:5000
 | `GET /me` | "secret" page if logged in |
 | `users.db` | SQLite user store |
 
-## Weaknesses (W1–W14, all OPEN)
+## Weaknesses (W1–W15, all OPEN)
 
 Same IDs as the top of `app.py`:
 
@@ -49,6 +49,7 @@ Same IDs as the top of `app.py`:
 | W12 | No session regenerate on login | Login only sets `session["username"]` |
 | W13 | User enumeration | Unknown user → `"Unknown username"`; bad pw → `"Wrong password"` |
 | W14 | No CSRF tokens | Register/login forms are bare POSTs |
+| W15 | No password pepper | (nothing to pepper yet; not Flask `secret_key`) |
 
 ## Naming for later steps
 
@@ -56,7 +57,8 @@ Same IDs as the top of `app.py`:
 |----------------|-------------------------|
 | `1-2-basic-hashing` | W1, W2 (fast hash, still no salt) |
 | `1-3-salted-hashing` | W3 |
-| `1-4-slow-hash` | W4 (bcrypt/argon2) |
+| [1-4-slow-hash](../1-4-slow-hash/) | W4 (bcrypt) |
+| `…-pepper` | W15 |
 | … | one control / name per step |
 
 Those folders are **not created until the step is built**.

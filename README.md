@@ -21,7 +21,7 @@ If a lab stores secrets in plaintext, skips TLS, omits rate limits, or hard-code
 
 | Track | Topic | Status |
 |-------|--------|--------|
-| [01-password-auth](./01-password-auth/) | Password auth ladder | 1-1-base, 1-2-basic-hashing, 1-3-salted-hashing ready |
+| [01-password-auth](./01-password-auth/) | Password auth ladder | 1-1…1-4 ready |
 
 ## Layout
 
@@ -33,6 +33,7 @@ cyber_labs/
     1-1-base/              # all weaknesses open
     1-2-basic-hashing/     # SHA-256 digests (W1/W2)
     1-3-salted-hashing/    # per-user salt (W3)
+    1-4-slow-hash/         # bcrypt (W4)
     …                     # next steps when built
 
 ```

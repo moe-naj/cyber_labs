@@ -10,7 +10,7 @@ Session notes from implementing and reasoning about this step. Not a substitute 
 - Register and login must use the **same** transform: hash on write; hash submitted secret and compare digests on login.
 - SHA-256 is **one-way**: you cannot decrypt a digest back to the password.
 - Sites that “decrypt” SHA-256 are doing **lookup / wordlist / preimage search**, not reversing the hash.
-- Residual risk after this step was already on the inventory: **W3** (no salt), **W4** (fast hash), **W7** (weak policy) — not brand-new W IDs.
+- Residual risk after this step was already on the inventory: **W3** (no salt), **W4** (fast hash), **W7** (weak policy). **W15** (pepper) was appended to the track inventory later; it is still OPEN and not this rung.
 
 ## Hash representation
 

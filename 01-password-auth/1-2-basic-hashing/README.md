@@ -8,7 +8,7 @@
 |----|--------|
 | **W1** | **MITIGATED** — DB holds hex digest, not the password |
 | **W2** | **MITIGATED** — register + login use `hashlib.sha256` |
-| W3–W14 | OPEN — including no salt (W3) and fast hash (W4) |
+| W3–W15 | OPEN — including no salt (W3), fast hash (W4), no pepper (W15) |
 
 Same app shape as [1-1-base](../1-1-base/): register + login + session. Only the password store/verify path changed.
 
@@ -58,7 +58,7 @@ sqlite3 users.db "SELECT username, password_hash FROM users;"
 # for common passwords. That is not "decrypting" SHA-256; it is preimage search.
 ```
 
-## Weaknesses (W1–W14)
+## Weaknesses (W1–W15)
 
 Same IDs as the top of `app.py`:
 
@@ -78,13 +78,15 @@ Same IDs as the top of `app.py`:
 | W12 | OPEN | No session regenerate on login | Login only sets `session["username"]` |
 | W13 | OPEN | User enumeration | `"Unknown username"` vs `"Wrong password"` |
 | W14 | OPEN | No CSRF tokens | Register/login forms are bare POSTs |
+| W15 | OPEN | No password pepper | Hash has no app secret outside the DB (not W5) |
 
 ## Naming for later steps
 
 | Planned folder | Implies closed (mainly) |
 |----------------|-------------------------|
 | `1-3-salted-hashing` | W3 |
-| `1-4-slow-hash` | W4 (bcrypt/argon2) |
+| [1-4-slow-hash](../1-4-slow-hash/) | W4 (bcrypt) |
+| `…-pepper` | W15 |
 | … | one control / name per step |
 
 Those folders are **not created until the step is built**.

@@ -8,7 +8,7 @@ Session notes from this step. Not a substitute for `app.py` W* comments or the R
 - Stops **shared digests** (same password → same hash → one crack, many accounts).
 - Stops **precomputed / rainbow tables** of unsalted `sha256("password")`.
 - Does **not** assume the attacker has hash-only and no salt. Salt is stored on purpose; it is not a secret.
-- A secret extra value *not* in the DB would be a **pepper** (not this rung).
+- A secret extra value *not* in the DB would be a **pepper** (**W15**, not this rung; not Flask `secret_key` / W5).
 
 ## Hash construction this step
 
@@ -39,4 +39,4 @@ One control this folder: **per-user salt**. Next smallest upgrade is a slow hash
 
 ## Next rung
 
-`1-4-slow-hash` — not built. W4 only (bcrypt/argon2). Same rule: copy 1-3, user implements, then comments/docs.
+[1-4-slow-hash](../1-4-slow-hash/) — slow hash (W4, bcrypt).

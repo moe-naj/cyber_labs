@@ -8,10 +8,10 @@ Same small web app, stepped up one control at a time.
 
 | Step | Folder | Meaning | Status |
 |------|--------|---------|--------|
-| 1-1 | [1-1-base](./1-1-base/) | Baseline — **all W1–W14 OPEN** | ready |
+| 1-1 | [1-1-base](./1-1-base/) | Baseline — **all W1–W15 OPEN** | ready |
 | 1-2 | [1-2-basic-hashing](./1-2-basic-hashing/) | SHA-256 digests — **W1, W2 MITIGATED** | ready |
 | 1-3 | [1-3-salted-hashing](./1-3-salted-hashing/) | Per-user salt — **W3 MITIGATED** | ready |
-| 1-4 | `1-4-slow-hash` | bcrypt/argon2 (mainly W4) | not built |
+| 1-4 | [1-4-slow-hash](./1-4-slow-hash/) | bcrypt (mainly W4) | ready |
 
 Only create the next folder when that step is implemented. Empty placeholders are not kept.
 
@@ -30,14 +30,14 @@ If it isn’t in the step name, it doesn’t get added yet.
 
 ## Code comment convention
 
-Each step’s `app.py` keeps the full **W1–W14** weakness list at the top (`OPEN` or `MITIGATED`).
+Each step’s `app.py` keeps the full **W1–W15** weakness list at the top (`OPEN` or `MITIGATED`).
 
-- Base inventory is fixed in **1-1-base** so later steps do not renumber.
+- Base inventory lives in **1-1-base** and is **append-only** (new IDs at the end; never renumber).
 - Only mark **MITIGATED** what this step actually fixed.
 - Leave other items `OPEN`.
 - Inline comments at the relevant lines reference the same IDs (e.g. `# W1:`).
 
-### Base inventory (W1–W14)
+### Base inventory (W1–W15)
 
 | ID | Concern |
 |----|---------|
@@ -55,3 +55,4 @@ Each step’s `app.py` keeps the full **W1–W14** weakness list at the top (`OP
 | W12 | Session not regenerated on login |
 | W13 | User enumeration via errors |
 | W14 | No CSRF protection on forms |
+| W15 | No password pepper (app secret mixed into the hash, kept outside the user table; not Flask `secret_key`) |

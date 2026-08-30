@@ -28,7 +28,7 @@ Session notes from reading the baseline app (boilerplate, sessions, cookies). No
 
 - Run: venv → `pip install -r requirements.txt` → `python app.py` → http://127.0.0.1:5000
 - Repo git root is `cyber_labs/`; `.venv/` is already gitignored.
-- Weakness IDs W1–W14 are fixed in base so later steps don’t renumber; only flip what a step actually fixed.
+- Weakness IDs live in base and are **append-only** (now W1–W15); later steps don’t renumber. Only flip what a step actually fixed.
 
 ## Next rung
 
