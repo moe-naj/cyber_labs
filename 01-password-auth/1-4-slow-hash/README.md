@@ -88,7 +88,7 @@ Same IDs as the top of `app.py`:
 
 | Planned folder | Implies closed (mainly) |
 |----------------|-------------------------|
-| `…-pepper` | W15 |
+| [1-5-pepper](../1-5-pepper/) | W15 |
 | … | one control / name per step |
 
 Those folders are **not created until the step is built**.

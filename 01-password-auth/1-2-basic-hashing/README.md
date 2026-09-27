@@ -86,7 +86,7 @@ Same IDs as the top of `app.py`:
 |----------------|-------------------------|
 | `1-3-salted-hashing` | W3 |
 | [1-4-slow-hash](../1-4-slow-hash/) | W4 (bcrypt) |
-| `…-pepper` | W15 |
+| [1-5-pepper](../1-5-pepper/) | W15 |
 | … | one control / name per step |
 
 Those folders are **not created until the step is built**.

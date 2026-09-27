@@ -43,4 +43,4 @@ One control this folder: **slow hash (bcrypt)**. Next password-store extra is pe
 
 ## Next rung
 
-Not built. W15 (`…-pepper`) is the leftover password-store control; W5–W14 stay on the inventory too. Same rule: copy this step, one control, then comments/docs.
+[1-5-pepper](../1-5-pepper/) — pepper (W15). W5–W14 stay on the inventory too.

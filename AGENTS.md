@@ -17,12 +17,12 @@ Educational password-auth ladder. Intentionally weak early rungs. Do not treat a
 
 ## Track 01 status (leave-off)
 
-**Done:** 1-1-base, 1-2-basic-hashing, 1-3-salted-hashing, **1-4-slow-hash (W4 bcrypt, MITIGATED)**.
+**Done:** 1-1-base, 1-2-basic-hashing, 1-3-salted-hashing, 1-4-slow-hash (W4 bcrypt), **1-5-pepper (W15 pepper, MITIGATED)**.
 
-**This session, not necessarily committed yet:** 1-4 implementation + docs; W15 (pepper) appended as OPEN on 1-1…1-4; `.gitignore` `myenv/` + `.myenv/`.
+**This session, not necessarily committed yet:** 1-5 implementation + comments, README, and Learnings. Pepper file is `1-5-pepper/app.env` (mode 600, gitignored by `*.env`). `.gitignore` uses `*.env`, which also covers `app.env`.
 
-**Next rung (not built):** password-store leftover is **W15 pepper** (`…-pepper`). W5–W14 still OPEN. Same rule: copy 1-4, one control, user implements, then comments/docs.
+**Next rung (not built):** not named. Password-store items in this track (W1–W4, W15) are mitigated on 1-5. W5–W14 still OPEN. Same rule: copy 1-5, one control, user implements, then comments/docs.
 
-Read first: `01-password-auth/README.md`, then `01-password-auth/1-4-slow-hash/{README,Learnings,app.py}`.
+Read first: `01-password-auth/README.md`, then `01-password-auth/1-5-pepper/{README,Learnings,app.py}`.
 
 To continue **this** conversation instead of a fresh tree: `/resume` in the TUI (or `grok --resume` in this directory).

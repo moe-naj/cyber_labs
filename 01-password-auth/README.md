@@ -12,6 +12,7 @@ Same small web app, stepped up one control at a time.
 | 1-2 | [1-2-basic-hashing](./1-2-basic-hashing/) | SHA-256 digests — **W1, W2 MITIGATED** | ready |
 | 1-3 | [1-3-salted-hashing](./1-3-salted-hashing/) | Per-user salt — **W3 MITIGATED** | ready |
 | 1-4 | [1-4-slow-hash](./1-4-slow-hash/) | bcrypt (mainly W4) | ready |
+| 1-5 | [1-5-pepper](./1-5-pepper/) | Pepper before bcrypt (mainly W15) | ready |
 
 Only create the next folder when that step is implemented. Empty placeholders are not kept.
 
@@ -23,7 +24,7 @@ Do **not** jump multiple hardening controls in one step.
 
 Each gap is the **next smallest meaningful upgrade** only — enough to change the attack story, nothing extra.
 
-- Good: base → basic hashing → salting → slow hash  
+- Good: base → basic hashing → salting → slow hash → pepper  
 - Bad: base → OAuth2 + MFA + rate limits + TLS in one go  
 
 If it isn’t in the step name, it doesn’t get added yet.
